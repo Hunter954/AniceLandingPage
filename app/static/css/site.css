@@ -4,12 +4,22 @@
 /* Ajustes do destaque principal e reaproveitamento da logomarca cadastrada */
 .hero-person-wrap{position:relative;min-height:calc(100vh - 70px);display:flex;align-items:flex-end;justify-content:center}
 .hero-person{width:auto;max-width:125%;height:94vh;max-height:940px;object-fit:contain;object-position:center bottom;transform:translateX(-2%)}
-.hero-person-logo{position:absolute;z-index:4;left:1rem;top:18%;width:150px;display:flex;align-items:center;justify-content:center}
-.hero-person-logo img{display:block;width:100%;height:auto;max-height:105px;object-fit:contain}
-.hero-person-logo strong{font-size:1.25rem;line-height:1;color:#fff;text-align:center}.hero-person-logo span{display:block;color:var(--yellow);font-size:1.5rem}
 .footer-logo{display:inline-flex!important;align-items:center;margin:0 0 1.1rem!important}
 .footer-logo img{display:block;width:auto;max-width:155px;height:auto;max-height:82px;object-fit:contain}
 .footer-logo strong{font-size:1.2rem;color:#fff}
-@media(max-width:1199px){.hero-person{max-width:118%;height:88vh}.hero-person-logo{left:.5rem;top:21%;width:125px}}
-@media(max-width:991px){.hero-person-wrap{min-height:470px}.hero-person{width:100%;max-width:620px;height:500px;max-height:none;transform:none}.hero-person-logo{left:50%;top:1rem;transform:translateX(-50%);width:120px}}
-@media(max-width:576px){.hero-person-wrap{min-height:390px}.hero-person{height:410px;width:115%;max-width:none}.hero-person-logo{width:105px;top:.5rem}.footer-logo img{max-width:135px;max-height:70px}}
+@media(max-width:1199px){.hero-person{max-width:118%;height:88vh}}
+@media(max-width:991px){.hero-person-wrap{min-height:470px}.hero-person{width:100%;max-width:620px;height:500px;max-height:none;transform:none}}
+@media(max-width:576px){.hero-person-wrap{min-height:390px}.hero-person{height:410px;width:115%;max-width:none}.footer-logo img{max-width:135px;max-height:70px}}
+
+/* Refinos visuais do hero e botões */
+.hero-copy{display:flex;flex-direction:column;justify-content:center}
+.hero-brand{margin-bottom:1.35rem}
+.hero-brand img{display:block;max-width:min(100%,420px);width:100%;height:auto;object-fit:contain}
+.hero-brand h1{margin-bottom:.7rem}
+.btn{transition:background-color .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease}
+.btn-yellow:hover,.btn-yellow:focus,.btn-yellow:active,.btn-check:checked + .btn-yellow,.btn.show.btn-yellow{background:#f0c900!important;border-color:#f0c900!important;color:#08246e!important;box-shadow:0 8px 22px rgba(255,212,0,.24)}
+.btn-outline-light:hover,.btn-outline-light:focus,.btn-outline-light:active{background:rgba(255,255,255,.12)!important;border-color:#fff!important;color:#fff!important;box-shadow:none}
+.section .btn-outline-light,.section.light .btn-outline-light{border-color:var(--blue);color:var(--blue)}
+.section .btn-outline-light:hover,.section .btn-outline-light:focus,.section.light .btn-outline-light:hover,.section.light .btn-outline-light:focus{background:var(--blue)!important;border-color:var(--blue)!important;color:#fff!important}
+@media(max-width:991px){.hero-copy{padding-top:1rem;text-align:center;align-items:center}.hero-brand img{margin-inline:auto;max-width:340px}.hero h2,.hero p{max-width:100%}}
+@media(max-width:576px){.hero-brand img{max-width:280px}}
