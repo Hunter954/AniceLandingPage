@@ -11,7 +11,7 @@ def inject_site_data():
 @site_bp.route('/')
 def home():
     sections = {}
-    for name in ['stats','areas','projects','news','gallery','agenda','testimonials']:
+    for name in ['stats','areas','projects','gallery']:
         sections[name] = ContentItem.query.filter_by(section=name, active=True).order_by(ContentItem.sort_order, ContentItem.id).all()
     return render_template('site/index.html', **sections)
 

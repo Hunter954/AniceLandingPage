@@ -23,3 +23,7 @@
 .section .btn-outline-light:hover,.section .btn-outline-light:focus,.section.light .btn-outline-light:hover,.section.light .btn-outline-light:focus{background:var(--blue)!important;border-color:var(--blue)!important;color:#fff!important}
 @media(max-width:991px){.hero-copy{padding-top:1rem;text-align:center;align-items:center}.hero-brand img{margin-inline:auto;max-width:340px}.hero h2,.hero p{max-width:100%}}
 @media(max-width:576px){.hero-brand img{max-width:280px}}
+
+/* Ajustes de campanha Kodama */
+.navbar-brand strong{font-size:1.35rem;letter-spacing:.08em;color:#fff}.hero-brand>img,.footer-logo img{max-width:230px;max-height:90px;object-fit:contain}.proposal-card .card-image{height:120px}.proposal-card .card-image i{font-size:3rem}.proposal-card h3{font-size:1rem;line-height:1.25}.proposal-card p{font-size:.78rem;line-height:1.65}.section-label.text-white{color:#fff!important}.cta{align-items:center}.footer-logo{display:inline-block;margin-bottom:1rem}
+@media(max-width:576px){.navbar-brand strong{font-size:1.1rem}.hero-brand>img{max-width:190px}.proposal-card .card-image{height:100px}}
