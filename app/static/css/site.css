@@ -49,3 +49,146 @@ footer{background:#1c4427}
 @media(max-width:991px){.navbar{background:#23542f}}
 
 .hero-banner + .stats{margin-top:0}
+
+/* =========================================================
+   UI/UX MOBILE — refinamento geral
+   ========================================================= */
+html{scroll-behavior:smooth;scroll-padding-top:78px}
+body{overflow-x:hidden}
+
+@media(max-width:991.98px){
+  .navbar{padding:.55rem 0;box-shadow:0 8px 28px rgba(15,43,23,.16)}
+  .navbar>.container{padding-inline:1rem}
+  .navbar-brand{display:flex;align-items:center;min-height:48px;padding:0}
+  .navbar-brand img{max-height:48px;width:auto;max-width:170px;object-fit:contain}
+  .navbar-toggler{border:1px solid rgba(255,255,255,.28);border-radius:10px;padding:.45rem .58rem;box-shadow:none!important}
+  .navbar-toggler:focus{box-shadow:0 0 0 .18rem rgba(180,149,66,.25)!important}
+  .navbar-collapse{margin-top:.6rem;padding:.55rem;border-radius:14px;background:rgba(24,61,33,.98);box-shadow:0 16px 35px rgba(0,0,0,.14)}
+  .navbar-nav{gap:.1rem!important;align-items:stretch!important}
+  .nav-link{font-size:.78rem;padding:.8rem .85rem!important;border-radius:9px;letter-spacing:.02em}
+  .nav-link:hover,.nav-link:focus{background:rgba(255,255,255,.08)}
+  .navbar-nav .btn{width:100%;margin-top:.35rem;padding:.78rem 1rem}
+
+  .section{padding:4rem 0}
+  .section>.container{padding-inline:1.1rem}
+  .section h2{line-height:1.08;margin-top:.45rem}
+  .section-label{display:inline-block;letter-spacing:.07em;line-height:1.35}
+  .heading-row{margin-bottom:1.15rem}
+
+  .about-card{min-height:0;border-radius:18px;box-shadow:0 14px 32px rgba(19,61,31,.1)}
+  .about-image{aspect-ratio:16/11;min-height:0}
+  .quote{padding:1.65rem}
+  .quote p{font-size:.92rem;line-height:1.65;margin-bottom:1rem}
+  .quote em{font-size:1.35rem}
+
+  .icon-card,.content-card,.testimonial,.agenda-card{border-radius:16px;box-shadow:0 8px 24px rgba(16,42,31,.07)}
+  .icon-card{padding:1.45rem 1.15rem;text-align:left}
+  .icon-card i{font-size:2rem;display:block;margin-bottom:.65rem}
+  .icon-card h3{font-size:.95rem;margin-bottom:.45rem}
+  .icon-card p{font-size:.76rem;line-height:1.55;margin-bottom:0}
+
+  .proposal-card .card-image{height:145px}
+  .proposal-card .p-4{padding:1.25rem!important}
+  .proposal-card h3{font-size:1rem;line-height:1.35;margin-bottom:.65rem}
+  .proposal-card p{font-size:.79rem;line-height:1.62;margin-bottom:.25rem}
+
+  .gallery-grid{gap:8px;grid-auto-rows:180px}
+  .gallery-item,.gallery-cta{border-radius:13px}
+  .gallery-item:first-child,.gallery-item:nth-child(3){grid-row:auto}
+  .gallery-cta{padding:1rem}
+
+  .cta{border-radius:18px;padding:2rem;align-items:center}
+  .cta>div{width:100%}
+  .cta h2{line-height:1.08;margin:.5rem 0 .75rem}
+  .cta p{line-height:1.6}
+  .cta img{max-width:36%;height:auto;margin:0 0 -2rem 1rem;align-self:flex-end}
+
+  footer{padding:3rem 0 1.5rem}
+  footer>.container{padding-inline:1.1rem}
+  footer .row{row-gap:2rem!important}
+  footer h4{font-size:.72rem;letter-spacing:.08em;color:var(--yellow);margin-bottom:.8rem}
+  footer a{margin:.6rem 0}
+  .socials{gap:.45rem;flex-wrap:wrap}
+  .socials a{width:40px;height:40px;border:1px solid rgba(255,255,255,.16);border-radius:10px;display:grid;place-items:center;margin:0}
+}
+
+@media(max-width:767.98px){
+  .hero-banner{margin-top:66px;background:#fff}
+  .hero-banner picture,.hero-banner img{width:100%}
+  .hero-banner img{object-fit:contain}
+  .hero-empty{min-height:420px;padding:2rem 1rem}
+
+  .stats{padding:0;margin:0;background:#f4f7f4}
+  .stats>.container{padding:1rem}
+  .stats-box{margin:0;border-radius:16px;box-shadow:0 10px 28px rgba(20,57,29,.08)}
+  .stat{min-height:92px;padding:.95rem .8rem;gap:.7rem;border-right:1px solid #edf1ee;border-bottom:1px solid #edf1ee;align-items:flex-start}
+  .stat:nth-child(2n){border-right:0}
+  .stat:nth-last-child(-n+2){border-bottom:0}
+  .stat i{font-size:1.55rem;line-height:1;color:var(--blue);margin-top:.08rem}
+  .stat strong{font-size:1rem;line-height:1.15;margin-bottom:.22rem}
+  .stat span{display:block;font-size:.64rem;line-height:1.35;color:#5e6d62}
+
+  .section{padding:3.35rem 0}
+  .section.pt-0{padding-top:.25rem!important}
+  .section .row.g-5{--bs-gutter-y:2rem}
+  h2,.section h2{font-size:1.6rem}
+  p{font-size:.86rem;line-height:1.65}
+
+  #sobre .btn{width:100%;margin-top:.3rem}
+  .feature-list{margin:1.3rem 0}
+  .feature-list li{display:flex;align-items:flex-start;gap:.15rem;line-height:1.45;margin:.9rem 0}
+  .feature-list i{flex:0 0 auto;margin-top:.05rem}
+
+  .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:155px}
+  .gallery-item img{min-width:0}
+  .gallery-cta strong{font-size:.78rem;line-height:1.2;margin-top:.4rem}
+  .gallery-cta span{font-size:.62rem;line-height:1.3;margin-top:.2rem}
+
+  .cta{padding:1.6rem}
+  .cta img{display:none}
+  .cta .d-flex{display:grid!important;grid-template-columns:1fr;width:100%;gap:.65rem!important}
+  .cta .btn{width:100%;white-space:normal;padding:.85rem .9rem}
+
+  footer .col-lg-4,footer .col-lg-2{width:100%}
+  footer .col-6{width:50%}
+  .footer-logo img{max-width:145px;max-height:72px}
+  footer p{font-size:.78rem;line-height:1.65}
+  footer hr{margin:2rem 0 1.1rem}
+}
+
+@media(max-width:575.98px){
+  .navbar-brand img{max-width:140px;max-height:44px}
+  .navbar-brand strong{font-size:1rem}
+  .hero-banner{margin-top:62px}
+
+  .stats>.container{padding:.8rem}
+  .stat{min-height:86px;padding:.8rem .65rem;gap:.55rem}
+  .stat i{font-size:1.35rem}
+  .stat strong{font-size:.9rem}
+  .stat span{font-size:.59rem}
+
+  .section{padding:3rem 0}
+  .section>.container{padding-inline:1rem}
+  h2,.section h2{font-size:1.48rem}
+  .section-label{font-size:.67rem}
+
+  .icon-card{padding:1.25rem 1rem}
+  .proposal-card .card-image{height:125px}
+  .proposal-card .p-4{padding:1.1rem!important}
+
+  .about-card{border-radius:15px}
+  .about-image{aspect-ratio:4/3}
+  .quote{padding:1.35rem}
+
+  .gallery-grid{grid-auto-rows:132px;gap:6px}
+  .gallery-item,.gallery-cta{border-radius:10px}
+  .gallery-cta i{font-size:1.55rem}
+  .gallery-cta strong{font-size:.68rem}
+
+  .cta{padding:1.35rem;border-radius:15px}
+  .cta h2{font-size:1.45rem}
+
+  footer{padding-top:2.7rem}
+  footer>.container{padding-inline:1rem}
+  footer .col-6{width:50%}
+}
