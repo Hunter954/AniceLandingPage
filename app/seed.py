@@ -8,19 +8,10 @@ KODAMA_DEFAULTS = [
     ('site_name','KODAMA','Nome do site','Identidade',0),
     ('logo','','Logomarca','Identidade',1),
     ('favicon','','Favicon','Identidade',2),
-    ('primary_color','#0432b8','Cor principal','Identidade',3),
-    ('secondary_color','#ffd400','Cor de destaque','Identidade',4),
-    ('hero_eyebrow','DEPUTADO FEDERAL','Chamada pequena','Hero',0),
-    ('hero_title','KODAMA','Título principal','Hero',1),
-    ('hero_number','','Número de campanha','Hero',2),
-    ('hero_tagline','UM COMPROMISSO REAL COM FOZ DO IGUAÇU E A FRONTEIRA','Frase principal','Hero',3),
-    ('hero_description','Uma candidatura para trazer soluções técnicas e políticas às dores reais da nossa região, destravar a burocracia em Brasília, atrair investimentos e garantir que a fronteira receba o respeito que merece.','Descrição','Hero',4),
-    ('hero_person','','Foto da pessoa','Hero',5),
-    ('hero_bg','','Imagem de fundo','Hero',6),
-    ('hero_btn1_text','CONHEÇA AS PROPOSTAS','Botão 1 - texto','Hero',7),
-    ('hero_btn1_url','#projetos','Botão 1 - link','Hero',8),
-    ('hero_btn2_text','','Botão 2 - texto','Hero',9),
-    ('hero_btn2_url','#','Botão 2 - link','Hero',10),
+    ('primary_color','#23542f','Cor principal','Identidade',3),
+    ('secondary_color','#b49542','Cor de destaque','Identidade',4),
+    ('hero_desktop_image','','Hero - imagem desktop','Hero',0),
+    ('hero_mobile_image','','Hero - imagem mobile','Hero',1),
     ('about_title','SOLUÇÕES REAIS PARA QUEM VIVE A FRONTEIRA','Título','Sobre',0),
     ('about_text','A candidatura de Kodama nasce da necessidade de levar as prioridades de Foz do Iguaçu e da fronteira para Brasília. O foco é viabilizar investimentos, reduzir burocracias e transformar projetos estratégicos em resultados concretos para a população.','Texto','Sobre',1),
     ('about_image','','Imagem principal','Sobre',2),
@@ -95,10 +86,25 @@ def seed_database():
         user.set_password(os.getenv('ADMIN_PASSWORD', 'TroqueAgora123!'))
         db.session.add(user)
 
+    # Atualiza a paleta antiga para a nova identidade sem sobrescrever cores já personalizadas.
+    old_primary = SiteSetting.query.filter_by(key='primary_color').first()
+    if old_primary and old_primary.value in {'#0432b8', '#0432B8'}:
+        old_primary.value = '#23542f'
+    old_secondary = SiteSetting.query.filter_by(key='secondary_color').first()
+    if old_secondary and old_secondary.value in {'#ffd400', '#FFD400'}:
+        old_secondary.value = '#b49542'
+
+    # O novo hero usa apenas dois banners: desktop e mobile.
+    obsolete_hero_keys = [
+        'hero_eyebrow','hero_title','hero_number','hero_tagline','hero_description',
+        'hero_person','hero_bg','hero_btn1_text','hero_btn1_url','hero_btn2_text','hero_btn2_url'
+    ]
+    SiteSetting.query.filter(SiteSetting.key.in_(obsolete_hero_keys)).delete(synchronize_session=False)
+
     current = {s.key: s for s in SiteSetting.query.all()}
     for key, value, label, group, order in KODAMA_DEFAULTS:
         item = current.get(key)
-        kind = 'image' if key in {'logo','favicon','hero_person','hero_bg','about_image','cta_image'} else ('color' if 'color' in key else 'text')
+        kind = 'image' if key in {'logo','favicon','hero_desktop_image','hero_mobile_image','about_image','cta_image'} else ('color' if 'color' in key else 'text')
         if not item:
             db.session.add(SiteSetting(key=key, value=value, label=label, group=group, sort_order=order, kind=kind))
         else:
