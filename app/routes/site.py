@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, current_app, send_from_directory, abort
-from ..models import SiteSetting, ContentItem
+from flask import Blueprint, render_template, current_app, send_from_directory, abort, request, redirect, url_for, flash
+from .. import db
+from ..models import SiteSetting, ContentItem, ContactMessage
 
 site_bp = Blueprint('site', __name__)
 
@@ -27,6 +28,32 @@ def blog_post(post_id):
     if not post:
         abort(404)
     return render_template('site/blog_post.html', post=post)
+
+
+@site_bp.route('/contato/enviar', methods=['POST'])
+def contact_submit():
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email', '').strip()
+    phone = request.form.get('phone', '').strip()
+    message = request.form.get('message', '').strip()
+    website = request.form.get('website', '').strip()  # honeypot anti-spam
+
+    if website:
+        return redirect(url_for('site.home', _anchor='mensagem'))
+
+    if not all([name, email, phone, message]):
+        flash('Preencha nome, e-mail, telefone e mensagem.', 'danger')
+        return redirect(url_for('site.home', _anchor='mensagem'))
+
+    if len(name) > 160 or len(email) > 180 or len(phone) > 60 or len(message) > 5000:
+        flash('Revise os dados enviados. A mensagem está acima do tamanho permitido.', 'danger')
+        return redirect(url_for('site.home', _anchor='mensagem'))
+
+    contact = ContactMessage(name=name, email=email, phone=phone, message=message)
+    db.session.add(contact)
+    db.session.commit()
+    flash('Mensagem enviada com sucesso! Obrigado por entrar em contato.', 'success')
+    return redirect(url_for('site.home', _anchor='mensagem'))
 
 @site_bp.route('/uploads/<path:filename>')
 def uploads(filename):

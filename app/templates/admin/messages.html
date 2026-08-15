@@ -1,0 +1,43 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="page-title messages-title">
+  <div>
+    <h1>Mensagens recebidas</h1>
+    <p class="section-hint">Contatos enviados pelo formulário do site, organizados por pessoa.</p>
+  </div>
+  <div class="message-summary"><i class="bi bi-envelope"></i><strong>{{ unread_count }}</strong><span>nova{% if unread_count != 1 %}s{% endif %}</span></div>
+</div>
+
+<div class="message-filters mb-3">
+  <a href="{{ url_for('admin.messages', status='all') }}" class="btn btn-sm {{ 'btn-primary' if status == 'all' else 'btn-light' }}">Todas</a>
+  <a href="{{ url_for('admin.messages', status='unread') }}" class="btn btn-sm {{ 'btn-primary' if status == 'unread' else 'btn-light' }}">Novas</a>
+  <a href="{{ url_for('admin.messages', status='read') }}" class="btn btn-sm {{ 'btn-primary' if status == 'read' else 'btn-light' }}">Lidas</a>
+</div>
+
+{% if items %}
+<div class="message-list">
+  {% for item in items %}
+  <article class="message-person {{ 'is-unread' if not item.is_read else '' }}">
+    <a class="message-main" href="{{ url_for('admin.message_view', message_id=item.id) }}">
+      <div class="message-avatar">{{ item.name[:1] | upper }}</div>
+      <div class="message-content">
+        <div class="message-person-head">
+          <div><strong>{{ item.name }}</strong>{% if not item.is_read %}<span class="new-pill">NOVA</span>{% endif %}</div>
+          <time>{{ item.created_at_br.strftime('%d/%m/%Y às %H:%M') }}</time>
+        </div>
+        <div class="message-contact-line"><span><i class="bi bi-envelope"></i> {{ item.email }}</span><span><i class="bi bi-telephone"></i> {{ item.phone }}</span></div>
+        <p>{{ item.message | truncate(190, True, '…') }}</p>
+      </div>
+    </a>
+    <div class="message-actions">
+      <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin.message_view', message_id=item.id) }}"><i class="bi bi-eye"></i> Ler</a>
+      <form method="post" action="{{ url_for('admin.message_toggle_read', message_id=item.id) }}"><button class="btn btn-sm btn-light" type="submit"><i class="bi {{ 'bi-envelope-open' if not item.is_read else 'bi-envelope' }}"></i> {{ 'Marcar lida' if not item.is_read else 'Marcar nova' }}</button></form>
+      <form method="post" action="{{ url_for('admin.message_delete', message_id=item.id) }}" onsubmit="return confirm('Excluir esta mensagem?');"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card-admin message-empty"><i class="bi bi-chat-square-text"></i><h5>Nenhuma mensagem por aqui</h5><p>Quando alguém enviar uma mensagem pelo site, ela aparecerá nesta área.</p></div>
+{% endif %}
+{% endblock %}

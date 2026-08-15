@@ -1,0 +1,24 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="page-title">
+  <div><a class="message-back" href="{{ url_for('admin.messages') }}"><i class="bi bi-arrow-left"></i> Voltar às mensagens</a><h1>Mensagem de {{ item.name }}</h1></div>
+</div>
+<div class="message-detail-grid">
+  <section class="card-admin message-detail-card">
+    <div class="message-detail-head"><div class="message-avatar large">{{ item.name[:1] | upper }}</div><div><h2>{{ item.name }}</h2><span>Recebida em {{ item.created_at_br.strftime('%d/%m/%Y às %H:%M') }}</span></div></div>
+    <div class="message-full-text">{{ item.message }}</div>
+  </section>
+  <aside class="card-admin contact-detail-card">
+    <h5>Dados da pessoa</h5>
+    <div class="contact-detail-item"><i class="bi bi-person"></i><div><small>Nome</small><strong>{{ item.name }}</strong></div></div>
+    <div class="contact-detail-item"><i class="bi bi-envelope"></i><div><small>E-mail</small><a href="mailto:{{ item.email }}">{{ item.email }}</a></div></div>
+    <div class="contact-detail-item"><i class="bi bi-telephone"></i><div><small>Telefone</small><a href="tel:{{ item.phone }}">{{ item.phone }}</a></div></div>
+    <div class="detail-actions">
+      <a class="btn btn-primary" href="mailto:{{ item.email }}"><i class="bi bi-envelope"></i> Responder por e-mail</a>
+      <a class="btn btn-success" href="https://wa.me/{{ item.phone | replace(' ', '') | replace('-', '') | replace('(', '') | replace(')', '') | replace('+', '') }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Abrir WhatsApp</a>
+      <form method="post" action="{{ url_for('admin.message_toggle_read', message_id=item.id) }}"><button class="btn btn-light w-100" type="submit"><i class="bi bi-envelope"></i> Marcar como nova</button></form>
+      <form method="post" action="{{ url_for('admin.message_delete', message_id=item.id) }}" onsubmit="return confirm('Excluir esta mensagem?');"><button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-trash"></i> Excluir mensagem</button></form>
+    </div>
+  </aside>
+</div>
+{% endblock %}

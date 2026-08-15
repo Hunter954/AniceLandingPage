@@ -3,13 +3,17 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from .. import db
-from ..models import AdminUser, SiteSetting, ContentItem
+from ..models import AdminUser, SiteSetting, ContentItem, ContactMessage
 
 admin_bp = Blueprint('admin', __name__, template_folder='../templates/admin')
 ALLOWED = {'png','jpg','jpeg','webp','gif','svg','ico'}
 SECTIONS = {
  'stats':'Números e destaques','areas':'Eixos de atuação','projects':'Projetos e propostas','gallery':'Galeria','blog':'Blog / Notícias'
 }
+
+@admin_bp.app_context_processor
+def inject_admin_message_count():
+    return {'admin_unread_messages': ContactMessage.query.filter_by(is_read=False).count()}
 
 def save_file(file):
     if not file or not file.filename: return ''
@@ -38,7 +42,9 @@ def logout():
 @login_required
 def dashboard():
     counts = {k: ContentItem.query.filter_by(section=k).count() for k in SECTIONS}
-    return render_template('admin/dashboard.html', counts=counts, sections=SECTIONS)
+    unread_messages = ContactMessage.query.filter_by(is_read=False).count()
+    total_messages = ContactMessage.query.count()
+    return render_template('admin/dashboard.html', counts=counts, sections=SECTIONS, unread_messages=unread_messages, total_messages=total_messages)
 
 @admin_bp.route('/settings/<group>', methods=['GET','POST'])
 @login_required
@@ -119,3 +125,47 @@ def profile():
         if request.form.get('password'): current_user.set_password(request.form['password'])
         db.session.commit(); flash('Perfil atualizado.','success')
     return render_template('admin/profile.html', sections=SECTIONS)
+
+
+@admin_bp.route('/messages')
+@login_required
+def messages():
+    status = request.args.get('status', 'all')
+    query = ContactMessage.query
+    if status == 'unread':
+        query = query.filter_by(is_read=False)
+    elif status == 'read':
+        query = query.filter_by(is_read=True)
+    items = query.order_by(ContactMessage.created_at.desc()).all()
+    unread_count = ContactMessage.query.filter_by(is_read=False).count()
+    return render_template('admin/messages.html', items=items, status=status, unread_count=unread_count, sections=SECTIONS)
+
+
+@admin_bp.route('/messages/<int:message_id>')
+@login_required
+def message_view(message_id):
+    item = ContactMessage.query.get_or_404(message_id)
+    if not item.is_read:
+        item.is_read = True
+        db.session.commit()
+    return render_template('admin/message_view.html', item=item, sections=SECTIONS)
+
+
+@admin_bp.route('/messages/<int:message_id>/toggle-read', methods=['POST'])
+@login_required
+def message_toggle_read(message_id):
+    item = ContactMessage.query.get_or_404(message_id)
+    item.is_read = not item.is_read
+    db.session.commit()
+    flash('Status da mensagem atualizado.', 'success')
+    return redirect(request.referrer or url_for('admin.messages'))
+
+
+@admin_bp.route('/messages/<int:message_id>/delete', methods=['POST'])
+@login_required
+def message_delete(message_id):
+    item = ContactMessage.query.get_or_404(message_id)
+    db.session.delete(item)
+    db.session.commit()
+    flash('Mensagem excluída.', 'success')
+    return redirect(url_for('admin.messages'))
