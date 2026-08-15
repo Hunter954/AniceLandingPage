@@ -8,7 +8,7 @@ from ..models import AdminUser, SiteSetting, ContentItem
 admin_bp = Blueprint('admin', __name__, template_folder='../templates/admin')
 ALLOWED = {'png','jpg','jpeg','webp','gif','svg','ico'}
 SECTIONS = {
- 'stats':'Números e destaques','areas':'Eixos de atuação','projects':'Projetos e propostas','gallery':'Galeria'
+ 'stats':'Números e destaques','areas':'Eixos de atuação','projects':'Projetos e propostas','gallery':'Galeria','blog':'Blog / Notícias'
 }
 
 def save_file(file):

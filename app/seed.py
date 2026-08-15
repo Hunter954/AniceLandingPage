@@ -28,6 +28,8 @@ KODAMA_DEFAULTS = [
     ('facebook','#','Facebook','Redes sociais',1),
     ('youtube','#','YouTube','Redes sociais',2),
     ('whatsapp','#','WhatsApp','Redes sociais',3),
+    ('twitter','#','X (Twitter)','Redes sociais',4),
+    ('tiktok','#','TikTok','Redes sociais',5),
 ]
 
 LEGACY_VALUES = {
