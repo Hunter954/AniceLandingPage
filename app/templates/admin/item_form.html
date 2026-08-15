@@ -1,1 +1,165 @@
-{% extends 'admin/base.html' %}{% block content %}<div class="page-title"><div><h1>{{'Editar' if item.id else 'Novo'}} item · {{section_name}}</h1><p class="section-hint">{% if section == 'blog' %}Publique matérias, ideias, posicionamentos e novidades com foto.{% else %}Preencha somente os campos necessários para esta seção.{% endif %}</p></div></div><form method="post" enctype="multipart/form-data"><div class="card-admin"><div class="row g-3"><div class="col-md-8"><label class="form-label">Título</label><input class="form-control" name="title" value="{{item.title or ''}}" required></div>{% if section != 'blog' %}<div class="col-md-4"><label class="form-label">Ícone Bootstrap</label><input class="form-control" name="icon" value="{{item.icon or 'bi-star'}}"><small class="text-muted">Ex.: bi-heart-fill</small></div>{% endif %}<div class="col-md-6"><label class="form-label">{% if section == 'blog' %}Resumo / linha fina{% else %}Subtítulo{% endif %}</label><input class="form-control" name="subtitle" value="{{item.subtitle or ''}}"></div><div class="col-md-3"><label class="form-label">{% if section == 'blog' %}Data da publicação{% else %}Data / informação curta{% endif %}</label><input class="form-control" name="date_text" value="{{item.date_text or ''}}"></div><div class="col-md-3"><label class="form-label">{% if section == 'blog' %}Categoria / tema{% else %}Local{% endif %}</label><input class="form-control" name="location" value="{{item.location or ''}}"></div><div class="col-12"><label class="form-label">{% if section == 'blog' %}Texto completo da matéria{% else %}Descrição{% endif %}</label><textarea class="form-control" rows="{% if section == 'blog' %}12{% else %}4{% endif %}" name="description">{{item.description or ''}}</textarea></div><div class="col-md-6"><label class="form-label">Imagem</label>{% if item.image %}<div><img class="thumb mb-2" src="{{url_for('site.uploads',filename=item.image)}}"></div>{% endif %}<input class="form-control" type="file" name="image" accept="image/*"></div>{% if section != 'blog' %}<div class="col-md-3"><label class="form-label">Texto do botão</label><input class="form-control" name="link_text" value="{{item.link_text or 'Saiba mais'}}"></div><div class="col-md-3"><label class="form-label">Link do botão</label><input class="form-control" name="link_url" value="{{item.link_url or '#'}}"></div>{% endif %}<div class="col-md-3"><label class="form-label">Ordem</label><input class="form-control" type="number" name="sort_order" value="{{item.sort_order or 0}}"></div>{% if section != 'blog' %}<div class="col-md-9"><label class="form-label">Informações extras</label><input class="form-control" name="extra" value="{{item.extra or ''}}"></div>{% endif %}<div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="active" {% if item.active %}checked{% endif %}><label class="form-check-label">Exibir este item no site</label></div></div></div><button class="btn btn-primary mt-4"><i class="bi bi-check2-circle"></i> Salvar item</button><a class="btn btn-light mt-4" href="{{url_for('admin.section_list',section=section)}}">Cancelar</a></div></form>{% endblock %}
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="page-title">
+  <div>
+    <h1>{{'Editar' if item.id else 'Novo'}} item · {{section_name}}</h1>
+    <p class="section-hint">
+      {% if section == 'blog' %}Publique matérias completas com formatação, links, listas, citações e imagens dentro do texto.{% else %}Preencha somente os campos necessários para esta seção.{% endif %}
+    </p>
+  </div>
+</div>
+
+{% if section == 'blog' %}
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+<style>
+  .article-editor-wrap{border:1px solid #dee2e6;border-radius:.5rem;overflow:hidden;background:#fff}
+  .article-editor-wrap .ql-toolbar{border:0;border-bottom:1px solid #dee2e6;background:#f8f9fa;position:sticky;top:0;z-index:5}
+  .article-editor-wrap .ql-container{border:0;font-size:16px;min-height:430px}
+  .article-editor-wrap .ql-editor{min-height:430px;line-height:1.75;padding:24px}
+  .article-editor-wrap .ql-editor h2{font-size:1.7rem;margin:1.4rem 0 .7rem}
+  .article-editor-wrap .ql-editor h3{font-size:1.35rem;margin:1.2rem 0 .6rem}
+  .article-editor-wrap .ql-editor img{max-width:100%;height:auto;border-radius:8px;margin:1rem auto;display:block}
+  .editor-help{font-size:.78rem;color:#6c757d;margin-top:.5rem}
+  .editor-uploading{display:none;align-items:center;gap:.5rem;font-size:.78rem;color:#6c757d;margin-top:.5rem}
+  .editor-uploading.show{display:flex}
+</style>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" id="content-form">
+  <div class="card-admin">
+    <div class="row g-3">
+      <div class="col-md-8">
+        <label class="form-label">Título</label>
+        <input class="form-control" name="title" value="{{item.title or ''}}" required>
+      </div>
+
+      {% if section != 'blog' %}
+      <div class="col-md-4">
+        <label class="form-label">Ícone Bootstrap</label>
+        <input class="form-control" name="icon" value="{{item.icon or 'bi-star'}}">
+        <small class="text-muted">Ex.: bi-heart-fill</small>
+      </div>
+      {% endif %}
+
+      <div class="col-md-6">
+        <label class="form-label">{% if section == 'blog' %}Resumo / linha fina{% else %}Subtítulo{% endif %}</label>
+        <input class="form-control" name="subtitle" value="{{item.subtitle or ''}}">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">{% if section == 'blog' %}Data da publicação{% else %}Data / informação curta{% endif %}</label>
+        <input class="form-control" name="date_text" value="{{item.date_text or ''}}">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">{% if section == 'blog' %}Categoria / tema{% else %}Local{% endif %}</label>
+        <input class="form-control" name="location" value="{{item.location or ''}}">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">{% if section == 'blog' %}Texto completo da matéria{% else %}Descrição{% endif %}</label>
+        {% if section == 'blog' %}
+          <div class="article-editor-wrap">
+            <div id="article-editor">{{ (item.description or '') | safe }}</div>
+          </div>
+          <textarea name="description" id="description-field" hidden>{{ item.description or '' }}</textarea>
+          <div class="editor-help"><i class="bi bi-info-circle"></i> Use a barra acima para formatar. No botão de imagem você pode enviar fotos diretamente para dentro da matéria.</div>
+          <div class="editor-uploading" id="editor-uploading"><span class="spinner-border spinner-border-sm" role="status"></span> Enviando imagem...</div>
+        {% else %}
+          <textarea class="form-control" rows="4" name="description">{{item.description or ''}}</textarea>
+        {% endif %}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">{% if section == 'blog' %}Foto de capa da matéria{% else %}Imagem{% endif %}</label>
+        {% if item.image %}<div><img class="thumb mb-2" src="{{url_for('site.uploads',filename=item.image)}}"></div>{% endif %}
+        <input class="form-control" type="file" name="image" accept="image/*">
+      </div>
+
+      {% if section != 'blog' %}
+      <div class="col-md-3"><label class="form-label">Texto do botão</label><input class="form-control" name="link_text" value="{{item.link_text or 'Saiba mais'}}"></div>
+      <div class="col-md-3"><label class="form-label">Link do botão</label><input class="form-control" name="link_url" value="{{item.link_url or '#'}}"></div>
+      {% endif %}
+
+      <div class="col-md-3"><label class="form-label">Ordem</label><input class="form-control" type="number" name="sort_order" value="{{item.sort_order or 0}}"></div>
+
+      {% if section != 'blog' %}
+      <div class="col-md-9"><label class="form-label">Informações extras</label><input class="form-control" name="extra" value="{{item.extra or ''}}"></div>
+      {% endif %}
+
+      <div class="col-12">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" name="active" {% if item.active %}checked{% endif %}>
+          <label class="form-check-label">Exibir este item no site</label>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-4"><i class="bi bi-check2-circle"></i> Salvar item</button>
+    <a class="btn btn-light mt-4" href="{{url_for('admin.section_list',section=section)}}">Cancelar</a>
+  </div>
+</form>
+
+{% if section == 'blog' %}
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+(function(){
+  const editorEl = document.getElementById('article-editor');
+  const field = document.getElementById('description-field');
+  const form = document.getElementById('content-form');
+  const uploading = document.getElementById('editor-uploading');
+
+  const quill = new Quill(editorEl, {
+    theme: 'snow',
+    placeholder: 'Escreva a matéria aqui...',
+    modules: {
+      toolbar: {
+        container: [
+          [{ header: [2, 3, 4, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ color: [] }, { background: [] }],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ align: [] }],
+          ['blockquote', 'code-block'],
+          ['link', 'image'],
+          ['clean']
+        ],
+        handlers: { image: imageHandler }
+      }
+    }
+  });
+
+  async function imageHandler(){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/png,image/jpeg,image/webp,image/gif';
+    input.click();
+
+    input.onchange = async function(){
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const data = new FormData();
+      data.append('image', file);
+      uploading.classList.add('show');
+      try {
+        const response = await fetch('{{ url_for("admin.blog_upload_image") }}', { method: 'POST', body: data });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || 'Falha ao enviar imagem.');
+        const range = quill.getSelection(true);
+        quill.insertEmbed(range.index, 'image', result.url, 'user');
+        quill.setSelection(range.index + 1, 0, 'silent');
+      } catch (err) {
+        alert(err.message || 'Não foi possível enviar a imagem.');
+      } finally {
+        uploading.classList.remove('show');
+      }
+    };
+  }
+
+  form.addEventListener('submit', function(){
+    field.value = quill.root.innerHTML;
+  });
+})();
+</script>
+{% endif %}
+{% endblock %}

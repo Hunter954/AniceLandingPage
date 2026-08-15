@@ -1,5 +1,5 @@
 import os, uuid
-from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from .. import db
@@ -96,6 +96,19 @@ def populate_item(item):
     item.active = bool(request.form.get('active'))
     file = request.files.get('image')
     if file and file.filename: item.image = save_file(file)
+
+
+@admin_bp.route('/blog/upload-image', methods=['POST'])
+@login_required
+def blog_upload_image():
+    file = request.files.get('image')
+    if not file or not file.filename:
+        return jsonify({'ok': False, 'error': 'Nenhuma imagem enviada.'}), 400
+    try:
+        filename = save_file(file)
+    except ValueError as e:
+        return jsonify({'ok': False, 'error': str(e)}), 400
+    return jsonify({'ok': True, 'url': url_for('site.uploads', filename=filename)})
 
 @admin_bp.route('/profile', methods=['GET','POST'])
 @login_required
