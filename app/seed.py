@@ -84,9 +84,15 @@ SECTION_DATA = {
 
 def seed_database():
     if not AdminUser.query.first():
-        user = AdminUser(name='Administrador', email=os.getenv('ADMIN_EMAIL', 'admin@site.com'))
+        user = AdminUser(name='Administrador', email=os.getenv('ADMIN_EMAIL', 'admin@site.com'), role='admin', enabled=True)
         user.set_password(os.getenv('ADMIN_PASSWORD', 'TroqueAgora123!'))
         db.session.add(user)
+
+    # Garante que instalações antigas tenham pelo menos um administrador.
+    first_user = AdminUser.query.order_by(AdminUser.id.asc()).first()
+    if first_user and not AdminUser.query.filter_by(role='admin').first():
+        first_user.role = 'admin'
+        first_user.enabled = True
 
     # Atualiza a paleta antiga para a nova identidade sem sobrescrever cores já personalizadas.
     old_primary = SiteSetting.query.filter_by(key='primary_color').first()

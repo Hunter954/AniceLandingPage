@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect, text
 from flask_login import LoginManager
 
 
@@ -37,6 +38,23 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        # Migração leve para instalações existentes (SQLite/PostgreSQL).
+        # create_all não adiciona novas colunas em tabelas já criadas.
+        columns = {c['name'] for c in inspect(db.engine).get_columns('admin_user')}
+        additions = {
+            'phone': "VARCHAR(60) DEFAULT ''",
+            'role': "VARCHAR(30) NOT NULL DEFAULT 'editor'",
+            'enabled': "BOOLEAN NOT NULL DEFAULT TRUE",
+            'updated_at': "DATETIME",
+            'last_login_at': "DATETIME",
+        }
+        if db.engine.dialect.name == 'postgresql':
+            additions['updated_at'] = 'TIMESTAMP'
+            additions['last_login_at'] = 'TIMESTAMP'
+        for name, ddl in additions.items():
+            if name not in columns:
+                db.session.execute(text(f'ALTER TABLE admin_user ADD COLUMN {name} {ddl}'))
+        db.session.commit()
         from .seed import seed_database
         seed_database()
 

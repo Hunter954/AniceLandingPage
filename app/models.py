@@ -9,7 +9,20 @@ class AdminUser(UserMixin, db.Model):
     name = db.Column(db.String(120), nullable=False, default='Administrador')
     email = db.Column(db.String(180), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(60), default='')
+    role = db.Column(db.String(30), nullable=False, default='editor')
+    enabled = db.Column(db.Boolean, nullable=False, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_login_at = db.Column(db.DateTime, nullable=True)
+
+    @property
+    def is_active(self):
+        return bool(self.enabled)
+
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

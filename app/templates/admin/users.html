@@ -1,0 +1,57 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="page-title users-page-title">
+  <div>
+    <span class="page-kicker">ACESSOS E PERMISSÕES</span>
+    <h1>Usuários</h1>
+    <p class="section-hint">Gerencie quem pode acessar e trabalhar no painel administrativo.</p>
+  </div>
+  <a class="btn btn-primary btn-admin-action" href="{{ url_for('admin.user_new') }}"><i class="bi bi-person-plus-fill"></i> Novo usuário</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="metric user-metric"><i class="bi bi-people-fill"></i><div><strong>{{stats.total}}</strong><span>Usuários cadastrados</span></div></div></div>
+  <div class="col-md-4"><div class="metric user-metric"><i class="bi bi-person-check-fill"></i><div><strong>{{stats.active}}</strong><span>Acessos ativos</span></div></div></div>
+  <div class="col-md-4"><div class="metric user-metric"><i class="bi bi-shield-lock-fill"></i><div><strong>{{stats.admins}}</strong><span>Administradores ativos</span></div></div></div>
+</div>
+
+<div class="card-admin users-toolbar mb-3">
+  <form method="get" class="user-filter-form">
+    <div class="user-search"><i class="bi bi-search"></i><input name="q" value="{{q}}" placeholder="Buscar por nome, e-mail ou telefone"></div>
+    <select name="role" class="form-select"><option value="all">Todos os níveis</option>{% for key,label in roles.items() %}<option value="{{key}}" {% if role==key %}selected{% endif %}>{{label}}</option>{% endfor %}</select>
+    <select name="status" class="form-select"><option value="all">Todos os status</option><option value="active" {% if status=='active' %}selected{% endif %}>Ativos</option><option value="inactive" {% if status=='inactive' %}selected{% endif %}>Desativados</option></select>
+    <button class="btn btn-outline-primary"><i class="bi bi-funnel"></i> Filtrar</button>
+    {% if q or role!='all' or status!='all' %}<a class="btn btn-light" href="{{url_for('admin.users')}}">Limpar</a>{% endif %}
+  </form>
+</div>
+
+<div class="card-admin p-0 users-table-card">
+  {% if items %}
+  <div class="table-responsive">
+    <table class="table users-table align-middle mb-0">
+      <thead><tr><th>Usuário</th><th>Nível</th><th>Status</th><th>Último acesso</th><th>Cadastro</th><th class="text-end">Ações</th></tr></thead>
+      <tbody>
+      {% for user in items %}
+      <tr>
+        <td><div class="user-identity"><div class="user-avatar">{{ user.name[:1]|upper }}</div><div><strong>{{user.name}}</strong><span>{{user.email}}</span>{% if user.phone %}<small>{{user.phone}}</small>{% endif %}</div></div></td>
+        <td><span class="role-badge role-{{user.role}}"><i class="bi {% if user.role=='admin' %}bi-shield-fill-check{% else %}bi-pencil-square{% endif %}"></i>{{roles.get(user.role,user.role)}}</span></td>
+        <td>{% if user.enabled %}<span class="status-pill status-active"><i></i>Ativo</span>{% else %}<span class="status-pill status-inactive"><i></i>Desativado</span>{% endif %}</td>
+        <td><span class="date-cell">{% if user.last_login_at %}{{user.last_login_at.strftime('%d/%m/%Y')}}<small>{{user.last_login_at.strftime('%H:%M')}}</small>{% else %}Nunca acessou{% endif %}</span></td>
+        <td><span class="date-cell">{{user.created_at.strftime('%d/%m/%Y') if user.created_at else '—'}}</span></td>
+        <td><div class="user-actions justify-content-end">
+          <a class="icon-action" title="Editar usuário" href="{{url_for('admin.user_edit',user_id=user.id)}}"><i class="bi bi-pencil"></i></a>
+          {% if user.id != current_user.id %}<form method="post" action="{{url_for('admin.user_toggle',user_id=user.id)}}"><button class="icon-action" title="{{'Desativar' if user.enabled else 'Ativar'}}"><i class="bi {{'bi-person-slash' if user.enabled else 'bi-person-check'}}"></i></button></form>
+          <button type="button" class="icon-action danger" title="Excluir" data-bs-toggle="modal" data-bs-target="#deleteUser{{user.id}}"><i class="bi bi-trash3"></i></button>{% endif %}
+        </div></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty-users"><i class="bi bi-people"></i><h5>Nenhum usuário encontrado</h5><p>Ajuste os filtros ou cadastre um novo usuário.</p></div>{% endif %}
+</div>
+
+{% for user in items %}{% if user.id != current_user.id %}
+<div class="modal fade" id="deleteUser{{user.id}}" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content admin-modal"><div class="modal-body p-4"><div class="modal-danger-icon"><i class="bi bi-trash3"></i></div><h4>Excluir usuário?</h4><p>O acesso de <strong>{{user.name}}</strong> será removido permanentemente.</p><div class="d-flex gap-2 justify-content-end mt-4"><button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button><form method="post" action="{{url_for('admin.user_delete',user_id=user.id)}}"><button class="btn btn-danger">Excluir usuário</button></form></div></div></div></div></div>
+{% endif %}{% endfor %}
+{% endblock %}

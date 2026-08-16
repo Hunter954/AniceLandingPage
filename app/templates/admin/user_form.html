@@ -1,0 +1,45 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+<div class="page-title">
+  <div><a class="back-link" href="{{url_for('admin.users')}}"><i class="bi bi-arrow-left"></i> Voltar para usuários</a><h1>{{'Editar usuário' if user else 'Novo usuário'}}</h1><p class="section-hint">{{'Atualize dados, acesso e credenciais.' if user else 'Crie um novo acesso ao painel administrativo.'}}</p></div>
+</div>
+<form method="post" id="userForm">
+<div class="user-form-layout">
+  <div class="card-admin user-form-main">
+    <div class="form-section-head"><div class="form-section-icon"><i class="bi bi-person-vcard"></i></div><div><h5>Informações do usuário</h5><p>Dados usados para identificação e acesso.</p></div></div>
+    <div class="row g-3">
+      <div class="col-md-7"><label class="form-label">Nome completo *</label><input class="form-control" name="name" required value="{{request.form.get('name', user.name if user else '')}}" placeholder="Ex.: João da Silva"></div>
+      <div class="col-md-5"><label class="form-label">Telefone</label><input class="form-control" name="phone" value="{{request.form.get('phone', user.phone if user else '')}}" placeholder="(45) 99999-9999"></div>
+      <div class="col-12"><label class="form-label">E-mail de acesso *</label><input class="form-control" type="email" name="email" required value="{{request.form.get('email', user.email if user else '')}}" placeholder="usuario@exemplo.com"><div class="form-help">Este e-mail será usado para entrar no painel.</div></div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="form-section-head"><div class="form-section-icon"><i class="bi bi-key-fill"></i></div><div><h5>Senha de acesso</h5><p>{% if user %}Preencha apenas se quiser trocar a senha atual.{% else %}Uma senha segura já foi gerada automaticamente.{% endif %}</p></div></div>
+    <label class="form-label">{{'Nova senha' if user else 'Senha temporária *'}}</label>
+    <div class="password-composer"><div class="password-field"><input class="form-control" id="passwordInput" name="password" type="password" {% if not user %}required{% endif %} value="{{request.form.get('password', generated_password)}}" placeholder="{{'Deixe em branco para manter a senha' if user else ''}}"><button type="button" class="password-eye" id="togglePassword" title="Mostrar ou ocultar senha"><i class="bi bi-eye"></i></button></div><button type="button" class="btn btn-soft-primary" id="generatePassword"><i class="bi bi-stars"></i> Gerar senha</button><button type="button" class="btn btn-light" id="copyPassword"><i class="bi bi-copy"></i> Copiar</button></div>
+    <div class="password-strength"><div class="password-strength-bar"><span id="strengthBar"></span></div><small id="strengthText">Use pelo menos 8 caracteres.</small></div>
+  </div>
+
+  <div class="user-form-side">
+    <div class="card-admin">
+      <div class="form-section-head compact"><div class="form-section-icon"><i class="bi bi-shield-lock"></i></div><div><h5>Acesso e permissão</h5><p>Defina o nível deste usuário.</p></div></div>
+      <label class="form-label">Nível de acesso</label><select class="form-select mb-3" name="role">{% for key,label in roles.items() %}<option value="{{key}}" {% if request.form.get('role',user.role if user else 'editor')==key %}selected{% endif %}>{{label}}</option>{% endfor %}</select>
+      <div class="permission-info"><div><i class="bi bi-shield-fill-check"></i><strong>Administrador</strong><span>Acesso total, inclusive usuários.</span></div><div><i class="bi bi-pencil-square"></i><strong>Editor</strong><span>Gerencia conteúdo e configurações do site.</span></div></div>
+      <div class="form-switch-row"><div><strong>Usuário ativo</strong><span>Permitir login no painel.</span></div><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="enabled" value="1" {% if request.form.get('enabled') or (request.method=='GET' and (not user or user.enabled)) %}checked{% endif %}></div></div>
+    </div>
+    {% if user %}<div class="card-admin account-meta"><h6>Informações da conta</h6><div><span>Criado em</span><strong>{{user.created_at.strftime('%d/%m/%Y às %H:%M') if user.created_at else '—'}}</strong></div><div><span>Último acesso</span><strong>{{user.last_login_at.strftime('%d/%m/%Y às %H:%M') if user.last_login_at else 'Ainda não acessou'}}</strong></div></div>{% endif %}
+  </div>
+</div>
+<div class="sticky-form-actions"><a class="btn btn-light" href="{{url_for('admin.users')}}">Cancelar</a><button class="btn btn-primary btn-admin-action"><i class="bi bi-check2-circle"></i> {{'Salvar alterações' if user else 'Criar usuário'}}</button></div>
+</form>
+<script>
+(function(){
+ const input=document.getElementById('passwordInput'), eye=document.getElementById('togglePassword'), gen=document.getElementById('generatePassword'), copy=document.getElementById('copyPassword'), bar=document.getElementById('strengthBar'), txt=document.getElementById('strengthText');
+ function generate(){const lower='abcdefghijkmnopqrstuvwxyz', upper='ABCDEFGHJKLMNPQRSTUVWXYZ', nums='23456789', special='!@#$%&*', all=lower+upper+nums+special; const rand=a=>a[crypto.getRandomValues(new Uint32Array(1))[0]%a.length]; let p=rand(lower)+rand(upper)+rand(nums)+rand(special); while(p.length<14)p+=rand(all); p=p.split('').sort(()=>crypto.getRandomValues(new Uint32Array(1))[0]%3-1).join(''); input.value=p; input.type='text'; eye.querySelector('i').className='bi bi-eye-slash'; strength();}
+ function strength(){const v=input.value; let score=0; if(v.length>=8)score++; if(v.length>=12)score++; if(/[A-Z]/.test(v)&&/[a-z]/.test(v))score++; if(/\d/.test(v)&&/[^A-Za-z0-9]/.test(v))score++; const pct=[0,25,50,75,100][score]; bar.style.width=pct+'%'; txt.textContent=!v?'Use pelo menos 8 caracteres.':score<=1?'Senha fraca':score==2?'Senha razoável':score==3?'Senha boa':'Senha forte';}
+ eye.addEventListener('click',()=>{input.type=input.type==='password'?'text':'password'; eye.querySelector('i').className=input.type==='password'?'bi bi-eye':'bi bi-eye-slash';});
+ gen.addEventListener('click',generate); input.addEventListener('input',strength);
+ copy.addEventListener('click',async()=>{if(!input.value)return; await navigator.clipboard.writeText(input.value); const old=copy.innerHTML; copy.innerHTML='<i class="bi bi-check2"></i> Copiada'; setTimeout(()=>copy.innerHTML=old,1400);}); strength();
+})();
+</script>
+{% endblock %}
