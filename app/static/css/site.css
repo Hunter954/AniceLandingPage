@@ -218,3 +218,109 @@ body{overflow-x:hidden}
 /* Formulário de mensagens no rodapé */
 .footer-message-section{display:grid;grid-template-columns:minmax(0,.85fr) minmax(420px,1.15fr);gap:3.5rem;align-items:center;padding:1rem 0 4rem;margin-bottom:3.5rem;border-bottom:1px solid rgba(255,255,255,.12)}.footer-message-copy h2{color:#fff;font-size:clamp(2rem,4vw,3.3rem);font-weight:900;line-height:1.06;margin:.6rem 0 1rem;max-width:520px}.footer-message-copy>p{color:rgba(255,255,255,.7);max-width:540px;line-height:1.75}.footer-kicker{display:inline-block;color:var(--yellow);font-size:.7rem;font-weight:900;letter-spacing:.12em}.footer-message-points{display:grid;gap:.55rem;margin-top:1.25rem}.footer-message-points span{display:flex;align-items:center;gap:.6rem;color:rgba(255,255,255,.78);font-size:.75rem}.footer-message-points i{color:var(--yellow);font-size:1rem}.footer-message-form-wrap{background:#fff;border-radius:20px;padding:1.35rem;box-shadow:0 20px 55px rgba(0,0,0,.16)}.footer-message-form .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}.footer-message-form label{display:block}.footer-message-form label>span{display:block;color:#34443a;font-size:.68rem;font-weight:800;margin-bottom:.4rem}.footer-message-form input,.footer-message-form textarea{width:100%;border:1px solid #dce4de;background:#f9fbf9;color:#203026;border-radius:10px;padding:.8rem .9rem;font:inherit;font-size:.8rem;outline:none;transition:border-color .2s,box-shadow .2s}.footer-message-form textarea{resize:vertical;min-height:125px}.footer-message-form input:focus,.footer-message-form textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(35,84,47,.09)}.footer-message-form .full{grid-column:1/-1}.form-submit-row{display:flex;align-items:center;justify-content:space-between;gap:1rem}.form-submit-row small{color:#829087;font-size:.64rem;line-height:1.4}.form-submit-row .btn{flex:0 0 auto}.hp-field{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important}.site-alert{padding:.75rem .9rem;border-radius:10px;font-size:.75rem;font-weight:700;margin-bottom:.9rem}.site-alert-success{background:#e7f7ed;color:#166534}.site-alert-danger{background:#fdebec;color:#9b1c1c}
 @media(max-width:991.98px){.footer-message-section{grid-template-columns:1fr;gap:1.8rem;padding-top:0}.footer-message-copy h2{font-size:2.2rem}.footer-message-form-wrap{border-radius:16px}}@media(max-width:575.98px){.footer-message-section{margin-bottom:2.5rem;padding-bottom:2.8rem}.footer-message-form-wrap{padding:1rem}.footer-message-form .form-grid{grid-template-columns:1fr}.footer-message-form .full{grid-column:auto}.form-submit-row{align-items:stretch;flex-direction:column}.form-submit-row .btn{width:100%}.footer-message-copy h2{font-size:1.8rem}.footer-message-copy>p{font-size:.8rem}}
+
+/* =========================================================
+   Ajustes home — hero/propostas, galeria, blog e CTA
+   ========================================================= */
+/* O quadro das 4 propostas rápidas invade o final do hero sem alterar a arte. */
+.hero-banner + .stats{
+  margin-top:-58px;
+  position:relative;
+  z-index:6;
+}
+.stats-box{
+  position:relative;
+  z-index:2;
+}
+
+/* A foto sempre preenche totalmente cada bloco da galeria, independentemente da proporção original. */
+.gallery-item{
+  position:relative;
+  display:block;
+  min-width:0;
+  min-height:0;
+  isolation:isolate;
+}
+.gallery-item > img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  min-width:100%;
+  min-height:100%;
+  max-width:none;
+  object-fit:cover;
+  object-position:center;
+}
+.gallery-item > i,
+.gallery-item > span{
+  position:relative;
+  z-index:1;
+}
+
+/* Blog: título com mais presença, limite seguro de linhas e cards equilibrados. */
+.blog-card{
+  display:flex;
+  flex-direction:column;
+}
+.blog-card > .p-4{
+  display:flex;
+  flex:1 1 auto;
+  flex-direction:column;
+}
+.blog-card h3{
+  font-size:1.35rem;
+  line-height:1.22;
+  margin-bottom:.75rem;
+  min-height:calc(1.22em * 2);
+}
+.blog-card h3 a{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  font-size:inherit!important;
+  line-height:inherit;
+  font-weight:850;
+  overflow-wrap:anywhere;
+}
+.blog-card p{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:4;
+  margin-bottom:1rem;
+}
+.blog-card .blog-read{
+  margin-top:auto;
+}
+
+/* O botão precisa permanecer legível sobre o fundo verde também fora do hover. */
+#contato .cta .btn-outline-light{
+  background:#fff!important;
+  border-color:#fff!important;
+  color:var(--blue)!important;
+}
+#contato .cta .btn-outline-light:hover,
+#contato .cta .btn-outline-light:focus,
+#contato .cta .btn-outline-light:active{
+  background:rgba(255,255,255,.9)!important;
+  border-color:#fff!important;
+  color:var(--blue)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.12)!important;
+}
+
+@media(max-width:767.98px){
+  .hero-banner + .stats{
+    margin-top:-38px!important;
+    background:transparent;
+  }
+  .stats > .container{
+    padding-top:0;
+  }
+  .blog-card h3{
+    font-size:1.2rem;
+    min-height:0;
+  }
+}
